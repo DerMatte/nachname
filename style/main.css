@@ -1,0 +1,32 @@
+html, body {
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+  background-color: #FDF8F1;
+  font-size: 20px;
+}
+
+h1 {
+  color: #76949C;
+  font-size: 20em;
+  text-align: center;
+  z-index: 2;
+  opacity: 1;
+}
+
+.pad {
+  margin: 2em;
+  z-index: -1;
+  background-color: #76949C;
+  -webkit-transition: width 2s;
+  transition: width 2s;
+}
+
+.pad:hover {
+  opacity: 0.2;
+}
+
+h1:hover {
+  opacity: 1;
+}
+/*# sourceMappingURL=main.css.map */
