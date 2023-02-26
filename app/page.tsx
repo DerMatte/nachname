@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 async function getGradient() {
   const res = await fetch(
     "https://raw.githubusercontent.com/ghosh/uiGradients/master/gradients.json",
-    { next: { revalidate: 10 } }
+    { next: { revalidate: 60 } }
   );
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
