@@ -1,25 +1,20 @@
 import MotionText from "./MotionText";
 import Balancer from "react-wrap-balancer";
-import { kv } from "@vercel/kv";
 import { revalidatePath } from "next/cache";
 import { Suspense } from "react";
+import supabase from "@/lib/supabase";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 const getGradient = async () => {
-  // const res = await fetch(
-  //   "https://raw.githubusercontent.com/ghosh/uiGradients/master/gradients.json",
-  //   { next: { revalidate: 60 } }
-  // );
-  // get gradients from redis
-  const number = await kv.get<Number>("gradientNumber");
-  if (!number) throw new Error("Failed to fetch Index Number");
+  const res = await fetch(
+    "https://raw.githubusercontent.com/ghosh/uiGradients/master/gradients.json",
+    { next: { revalidate: 60 } }
+  );
 
-  /// TODO: get only the obj at the index
-  const res = await kv.get("gradients");
-  if (!res) throw new Error("Failed to fetch data");
+  if (!res.ok) throw new Error("Failed to fetch data");
 
-  return res;
+  return res.json();
 };
 
 export default async function Home() {
@@ -28,33 +23,27 @@ export default async function Home() {
     // ...
     console.log("server");
 
-    const data = await kv.get("gradients");
-    const dataLenght = await kv.strlen("gradients");
+    // const data = await kv.get("gradients");
+    // const dataLenght = await kv.strlen("gradients");
+    const dataLenght = 500;
 
     const randInt = Math.floor(Math.random() * dataLenght);
     console.log(randInt);
-    const gradientNumber = await kv.set("gradientNumber", randInt);
-    console.log(gradientNumber);
+    // const gradientNumber = await kv.set("gradientNumber", randInt);
+    // console.log(gradientNumber);
 
     const degreeArray = [0, 45, 90, 135, 180, 225, 270, 315, 45, 45];
 
     const degree = degreeArray[Math.floor(Math.random() * degreeArray.length)];
 
-    await kv.set("degree", degree);
+    // await kv.set("degree", degree);
     revalidatePath("/");
   }
-  const data = await getGradient();
+  // const data = await getGradient();
 
-  const gradientNumber = await kv.get<{ gradientNumber: number }>(
-    "gradientNumber"
-  );
-
-  const degree = (await kv.get("degree")) || 45;
-
-  // console.log("gradientNumber", gradientNumber);
-
+  const degree = 45;
   // const gradient = data;
-  const gradient = data[gradientNumber] || {
+  const gradient = {
     name: "The Sky And The Sea",
     colors: ["#F7941E", "#004E8F"],
   };
@@ -64,6 +53,12 @@ export default async function Home() {
   // };
   // console.log(data);
   // console.log(degree);
+
+  let { data: supaGradients, error } = await supabase
+    .from("gradients")
+    .select("*");
+
+  console.log(supaGradients);
 
   return (
     <main
